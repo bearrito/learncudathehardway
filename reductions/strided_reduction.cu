@@ -8,7 +8,7 @@ extern "C"{
 }
 
 __global__ void
-vectorAdd(double *input,  double *output,int numElements)
+reduce(double *input,  double *output,int numElements)
 {
 
 
@@ -59,10 +59,10 @@ main(void)
 	orig_input = (double *)malloc(size);
 	memcpy(orig_input,h_input,size);
 
-	int threadsPerBlock = 512;
+	int threadsPerBlock = DIM;
 	int blocksPerGrid =(num_elements + threadsPerBlock - 1) / threadsPerBlock;
     	printf("CUDA kernel launch with %d blocks of %d threads\n", blocksPerGrid, threadsPerBlock);
-    	vectorAdd<<<blocksPerGrid, threadsPerBlock>>>(d_input,d_output, num_elements);
+    	reduce<<<blocksPerGrid, threadsPerBlock>>>(d_input,d_output, num_elements);
         copy_device_to_host(size,h_input,h_output,d_input,d_output);
         check_reduction(orig_input,h_output,num_elements,blocksPerGrid);
 	printf("DESTROYING\n");	

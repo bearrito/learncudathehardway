@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#define DIM 128
 
 void initialize_host(const size_t size,double **h_input,double **h_output){
 
