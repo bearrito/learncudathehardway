@@ -32,7 +32,7 @@ __global__ void belloch_scan_kernel(double *scannable,double *scanned,const int 
 	int stride=1;
 
 
-    	for (int d = blockDim.x; d > 0; d >>= 1)                    // build sum in place up the tree  
+    	for (int d = blockDim.x; d > 0; d >>= 1)
     	{   
     		__syncthreads();  
        		if (tid < d)  
@@ -41,16 +41,43 @@ __global__ void belloch_scan_kernel(double *scannable,double *scanned,const int 
 			 
 			int virtual_zero_index = (stride*2*tid) + stride -1;
     			int active_site = virtual_zero_index+stride;  
-//			int virtual_zero_index = stride*(2*tid+1) - 1;
-//			int active_site = stride*(2*tid+2) -1;
 			local[active_site] += local[virtual_zero_index];  
     		}  
-    		stride *= 2;  
+    		stride *= 2;  	
 	}
 
          
-    	if (tid == 0) { local[blockDim.x - 1] = 0.0; }
+    	if (tid == 0) { local[2*blockDim.x - 1] = 0.0; }
 	
+
+	
+	
+	for(int d = 1; d < 2*blockDim.x; d<<=1){
+
+		stride >>= 1;
+		__syncthreads();
+		
+		if(tid < d)
+		{
+
+			int swap_index = (stride*2*tid) + stride -1;
+			int add_index = swap_index+stride;
+
+			if(swap_index == 0 && blockIdx.x == 0){
+				printf("si = %d ai = %d stride =%d\n",swap_index,add_index,stride);
+			}
+
+
+			double tmp = local[swap_index];
+			local[swap_index]  = local[add_index];
+			local[add_index] += tmp;
+
+
+		}	
+		}
+
+	__syncthreads();
+
 	
 
 	scanned[2*tid+ block_shift] = local[2*tid];
