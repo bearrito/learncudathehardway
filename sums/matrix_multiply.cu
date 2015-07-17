@@ -122,8 +122,8 @@ main(void)
 	initialize_host(size,&h_a_input,&h_b_input,&h_output);
 
 	  for(int i = 0; i < num_elements;i++){
-                h_a_input[i] = (double)1;
-		h_b_input[i] = (double)1;
+                h_a_input[i] = (double)(rand()%11);
+		h_b_input[i] = (double)(rand()%11);
                 h_output[i] = 0;
         }
 
@@ -151,7 +151,7 @@ main(void)
 
 	}
 	
-	host_matrix_multiply(h_b_orig_input,h_b_orig_input,h_output,dim,dim,dim);
+	host_matrix_multiply(h_a_orig_input,h_b_orig_input,h_output,dim,dim,dim);
 	
 	printf("DESTROYING\n");	
 	destroy_matrix(a);
