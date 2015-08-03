@@ -105,15 +105,6 @@ int main(int argc, char *argv[]){
 	neigborhood_kernel<<<num_blocks,THREADS>>>(a, c,d_binary_op);
 	cudaMemcpy(h_output,c.elements,size,cudaMemcpyDeviceToHost);
 
-	for(int i = 0; i < num_elements; i++){
-		
-		if(i < 259){
-			printf("index=%d,original=%f max=%f\n",i,h_input[i], h_output[i]);
-		}
-
-
-	}
-
 	printf("DESTROYING");
 	destroy_matrix(a);
 	destroy_matrix(c);
